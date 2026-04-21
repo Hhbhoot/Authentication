@@ -88,3 +88,59 @@ export const getCurrentUser = async (): Promise<TokenPayload | null> => {
   if (!token) return null;
   return verifyAccessToken(token);
 };
+
+/**
+ * Handles Social Login Upsert logic
+ * Find or create a user based on social provider info
+ */
+export const handleSocialLogin = async (data: {
+  email: string;
+  name: string;
+  provider: 'google' | 'github';
+  socialId: string;
+  avatarUrl?: string;
+}) => {
+  // We need to import inside to avoid circular dependencies if any
+  const User = (await import('@/models/User')).default;
+  const Role = (await import('@/models/Role')).default;
+  const connectDB = (await import('@/lib/mongodb')).default;
+
+  await connectDB();
+
+  // 1. Check if user exists by email
+  let user = await User.findOne({ email: data.email }).populate('role');
+
+  if (user) {
+    // If user exists, ensure they are linked to this provider or have a socialId
+    if (!user.socialId || user.provider === 'local') {
+      user.socialId = data.socialId;
+      user.provider = data.provider;
+      if (data.avatarUrl && !user.avatarUrl) user.avatarUrl = data.avatarUrl;
+      await user.save();
+    }
+  } else {
+    // 2. Create new user if doesn't exist
+    let userRole = await Role.findOne({ name: 'user' });
+    if (!userRole) {
+      userRole = await Role.create({ name: 'user', permissions: [] });
+    }
+
+    user = await User.create({
+      email: data.email,
+      name: data.name,
+      provider: data.provider,
+      socialId: data.socialId,
+      avatarUrl: data.avatarUrl,
+      role: userRole._id,
+      isVerified: true, // Social emails are trusted/verified by provider
+    });
+    
+    // Refresh user object to get populated role name
+    user = await User.findById(user._id).populate('role');
+  }
+
+  return {
+    userId: user._id.toString(),
+    role: user.role.name,
+  };
+};

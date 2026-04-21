@@ -1,7 +1,23 @@
 import mongoose, { Schema, model, models } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
-const UserSchema = new Schema(
+export interface IUser {
+  name: string;
+  email: string;
+  password?: string;
+  provider: 'local' | 'google' | 'github';
+  socialId?: string;
+  role: mongoose.Types.ObjectId;
+  isVerified: boolean;
+  isBlocked: boolean;
+  twoFactorSecret?: string;
+  isTwoFactorEnabled: boolean;
+  avatarUrl?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const UserSchema = new Schema<IUser>(
   {
     name: {
       type: String,
@@ -16,9 +32,20 @@ const UserSchema = new Schema(
     },
     password: {
       type: String,
-      required: [true, 'Please provide a password'],
+      required: false, // Optional for social login
       minlength: [6, 'Password must be at least 6 characters long'],
-      select: false, // Don't return password by default
+      select: false,
+    },
+    provider: {
+      type: String,
+      enum: ['local', 'google', 'github'],
+      default: 'local',
+      required: true,
+    },
+    socialId: {
+      type: String,
+      unique: true,
+      sparse: true, // Allow multiple nulls for local users
     },
     role: {
       type: Schema.Types.ObjectId,
@@ -49,14 +76,14 @@ const UserSchema = new Schema(
 );
 
 // Hash password before saving
-UserSchema.pre('save', async function () {
-  if (!this.isModified('password')) {
+UserSchema.pre('save', async function (this: any) {
+  if (!this.isModified('password') || !this.password) {
     return;
   }
 
   try {
     const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
+    this.password = await bcrypt.hash(this.password as string, salt);
   } catch (error: any) {
     throw error;
   }
