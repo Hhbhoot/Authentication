@@ -1,6 +1,7 @@
+import { env } from '@/lib/env';
 import { jwtVerify } from 'jose';
 
-const ACCESS_TOKEN_SECRET = process.env.JWT_SECRET || 'access_secret';
+const ACCESS_TOKEN_SECRET = env.JWT_SECRET;
 
 export interface TokenPayload {
   userId: string;

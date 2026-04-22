@@ -1,6 +1,6 @@
-# Advanced Next.js 14 Authentication & User Management System
+# Enterprise SaaS Authentication Boilerplate (Next.js 15)
 
-A high-performance, production-ready authentication boilerlate designed with **Clean Architecture**, **Security-First** principles, and **Premium UI/UX**.
+A high-performance, security-first authentication foundation designed for modern SaaS applications. Built with **Clean Architecture**, **Zod-validated configuration**, and a **Global Design System**.
 
 ![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)
@@ -52,6 +52,21 @@ graph TD
 - **Validation**: Zod
 - **Icons**: Lucide React
 - **Email**: Nodemailer
+
+## 🎨 Branding & Customization
+
+The system features a **Global Design System** based on CSS variables. You can re-brand the entire application in seconds by modifying the variables in `src/app/globals.css`.
+
+### Primary Color System
+```css
+:root {
+  --primary: #4f46e5;      /* Main Brand Color */
+  --accent: #6366f1;       /* Interactive Accents */
+  --success: #10b981;      /* Success States */
+  --destructive: #ef4444;  /* Error States */
+  --radius: 0.75rem;       /* Global Corner Radius */
+}
+```
 
 ## 🛡 Security Audit Summary
 

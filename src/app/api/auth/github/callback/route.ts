@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { handleSocialLogin, generateTokens, setAuthCookies } from '@/lib/auth';
+import { env } from '@/lib/env';
 import AuditLog from '@/models/AuditLog';
 
 export async function GET(req: NextRequest) {
@@ -7,7 +8,7 @@ export async function GET(req: NextRequest) {
   const code = searchParams.get('code');
 
   if (!code) {
-    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_URL}/login?error=no_code`);
+    return NextResponse.redirect(`${env.NEXT_PUBLIC_URL}/login?error=no_code`);
   }
 
   try {
@@ -20,9 +21,9 @@ export async function GET(req: NextRequest) {
       },
       body: JSON.stringify({
         code,
-        client_id: process.env.GITHUB_CLIENT_ID!,
-        client_secret: process.env.GITHUB_CLIENT_SECRET!,
-        redirect_uri: `${process.env.NEXT_PUBLIC_URL}/api/auth/github/callback`,
+        client_id: env.GITHUB_ID!,
+        client_secret: env.GITHUB_SECRET!,
+        redirect_uri: `${env.NEXT_PUBLIC_URL}/api/auth/github/callback`,
       }),
     });
 
@@ -80,9 +81,9 @@ export async function GET(req: NextRequest) {
       details: { provider: 'github' },
     });
 
-    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_URL}/dashboard`);
+    return NextResponse.redirect(`${env.NEXT_PUBLIC_URL}/dashboard`);
   } catch (error) {
     console.error('GitHub OAuth Error:', error);
-    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_URL}/login?error=oauth_failed`);
+    return NextResponse.redirect(`${env.NEXT_PUBLIC_URL}/login?error=oauth_failed`);
   }
 }

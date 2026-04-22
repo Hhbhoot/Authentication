@@ -7,6 +7,12 @@
     --card: #ffffff;
     --card-foreground: #0f172a;
     --border: #f1f5f9;
+    --primary: #4f46e5;
+    --primary-foreground: #ffffff;
+    --accent: #6366f1;
+    --success: #10b981;
+    --destructive: #ef4444;
+    --radius: 0.75rem;
   }
 
   .dark {
@@ -15,6 +21,11 @@
     --card: #0f172a;
     --card-foreground: #f8fafc;
     --border: #1e293b;
+    --primary: #6366f1;
+    --primary-foreground: #ffffff;
+    --accent: #818cf8;
+    --success: #059669;
+    --destructive: #dc2626;
   }
 }
 
@@ -24,6 +35,12 @@
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-border-custom: var(--border);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-success: var(--success);
+  --color-destructive: var(--destructive);
+  --radius-custom: var(--radius);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

@@ -1,9 +1,10 @@
+import { env } from '@/lib/env';
 import jwt from 'jsonwebtoken';
 import { cookies } from 'next/headers';
 import Token from '@/models/Token';
 
-const ACCESS_TOKEN_SECRET = process.env.JWT_SECRET || 'access_secret';
-const REFRESH_TOKEN_SECRET = process.env.JWT_REFRESH_SECRET || 'refresh_secret';
+const ACCESS_TOKEN_SECRET = env.JWT_SECRET;
+const REFRESH_TOKEN_SECRET = env.JWT_REFRESH_SECRET;
 
 const ACCESS_TOKEN_EXPIRY = '15m'; // Short-lived
 const REFRESH_TOKEN_EXPIRY = '7d'; // Long-lived

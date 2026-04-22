@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
+import { env } from '@/lib/env';
 
 export async function GET() {
   const rootUrl = 'https://accounts.google.com/o/oauth2/v2/auth';
   
   const options = {
-    redirect_uri: `${process.env.NEXT_PUBLIC_URL}/api/auth/google/callback`,
-    client_id: process.env.GOOGLE_CLIENT_ID!,
+    redirect_uri: `${env.NEXT_PUBLIC_URL}/api/auth/google/callback`,
+    client_id: env.GOOGLE_ID!,
     access_type: 'offline',
     response_type: 'code',
     prompt: 'consent',

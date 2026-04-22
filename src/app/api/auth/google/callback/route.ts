@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { handleSocialLogin, generateTokens, setAuthCookies } from '@/lib/auth';
+import { env } from '@/lib/env';
 import AuditLog from '@/models/AuditLog';
 
 export async function GET(req: NextRequest) {
@@ -7,7 +8,7 @@ export async function GET(req: NextRequest) {
   const code = searchParams.get('code');
 
   if (!code) {
-    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_URL}/login?error=no_code`);
+    return NextResponse.redirect(`${env.NEXT_PUBLIC_URL}/login?error=no_code`);
   }
 
   try {
@@ -17,9 +18,9 @@ export async function GET(req: NextRequest) {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({
         code,
-        client_id: process.env.GOOGLE_CLIENT_ID!,
-        client_secret: process.env.GOOGLE_CLIENT_SECRET!,
-        redirect_uri: `${process.env.NEXT_PUBLIC_URL}/api/auth/google/callback`,
+        client_id: env.GOOGLE_ID!,
+        client_secret: env.GOOGLE_SECRET!,
+        redirect_uri: `${env.NEXT_PUBLIC_URL}/api/auth/google/callback`,
         grant_type: 'authorization_code',
       }),
     });
@@ -64,9 +65,9 @@ export async function GET(req: NextRequest) {
       details: { provider: 'google' },
     });
 
-    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_URL}/dashboard`);
+    return NextResponse.redirect(`${env.NEXT_PUBLIC_URL}/dashboard`);
   } catch (error) {
     console.error('Google OAuth Error:', error);
-    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_URL}/login?error=oauth_failed`);
+    return NextResponse.redirect(`${env.NEXT_PUBLIC_URL}/login?error=oauth_failed`);
   }
 }

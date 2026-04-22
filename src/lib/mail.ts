@@ -1,12 +1,11 @@
+import { env } from '@/lib/env';
 import nodemailer from 'nodemailer';
 
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT),
-  secure: process.env.SMTP_SECURE === 'true',
+  service: "gmail",
   auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASSWORD,
+    user: env.SMTP_USER,
+    pass: env.SMTP_PASSWORD,
   },
 });
 
@@ -60,7 +59,7 @@ const renderBaseTemplate = (content: string, previewText: string) => `
                 <tr>
                   <td class="content-cell">
                     <div align="center" style="margin-bottom: 30px;">
-                      <a href="${process.env.NEXT_URL}" style="font-weight: 800; font-size: 24px; color: #4F46E5; text-decoration: none;">AuthSystem</a>
+                      <a href="${env.NEXT_URL}" style="font-weight: 800; font-size: 24px; color: #4F46E5; text-decoration: none;">AuthSystem</a>
                     </div>
                     ${content}
                   </td>
@@ -89,7 +88,7 @@ const renderBaseTemplate = (content: string, previewText: string) => `
 
 export const sendEmail = async ({ to, subject, html }: EmailOptions) => {
   const mailOptions = {
-    from: `"${process.env.SMTP_FROM_NAME}" <${process.env.SMTP_FROM_EMAIL}>`,
+    from: `"${env.SMTP_FROM_NAME}" <${env.SMTP_FROM_EMAIL}>`,
     to,
     subject,
     html,
@@ -104,8 +103,8 @@ export const sendEmail = async ({ to, subject, html }: EmailOptions) => {
 };
 
 export const sendVerificationEmail = async (email: string, token: string) => {
-  const verificationUrl = `${process.env.NEXT_URL}/verify-email?token=${token}`;
-  
+  const verificationUrl = `${env.NEXT_URL}/verify-email?token=${token}`;
+
   const content = `
     <h1 class="h1">Verify your email</h1>
     <p class="p">Welcome to AuthSystem! We're excited to have you on board. To complete your registration and unlock all features, please verify your email address by clicking the button below.</p>
@@ -124,8 +123,8 @@ export const sendVerificationEmail = async (email: string, token: string) => {
 };
 
 export const sendPasswordResetEmail = async (email: string, token: string) => {
-  const resetUrl = `${process.env.NEXT_URL}/reset-password?token=${token}`;
-  
+  const resetUrl = `${env.NEXT_URL}/reset-password?token=${token}`;
+
   const content = `
     <h1 class="h1">Reset your password</h1>
     <p class="p">We received a request to reset your password for your AuthSystem account. If you made this request, please click the button below to set a new password.</p>
