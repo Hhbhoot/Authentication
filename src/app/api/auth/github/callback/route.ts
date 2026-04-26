@@ -36,13 +36,23 @@ export async function GET(req: NextRequest) {
 
     // 2. Get user info
     const userResponse = await fetch('https://api.github.com/user', {
-      headers: { 'Authorization': `token ${access_token}` },
+      headers: { 
+        'Authorization': `Bearer ${access_token}`,
+        'User-Agent': 'NextJS-Auth-System'
+      },
     });
     const githubUser = await userResponse.json();
 
+    if (!userResponse.ok) {
+      throw new Error(`GitHub Profile Error: ${githubUser.message || userResponse.statusText}`);
+    }
+
     // 3. GitHub emails can be private, so fetch them separately
     const emailResponse = await fetch('https://api.github.com/user/emails', {
-      headers: { 'Authorization': `token ${access_token}` },
+      headers: { 
+        'Authorization': `Bearer ${access_token}`,
+        'User-Agent': 'NextJS-Auth-System'
+      },
     });
     const emails = await emailResponse.json();
     const primaryEmail = emails.find((e: any) => e.primary && e.verified)?.email || emails[0]?.email;
