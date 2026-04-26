@@ -28,9 +28,16 @@ export async function GET(req: NextRequest) {
     });
 
     const tokenData = await tokenResponse.json();
+    
+    if (tokenData.error) {
+      console.error('GitHub Token Exchange Error:', tokenData.error, tokenData.error_description);
+      throw new Error(`GitHub Token Error: ${tokenData.error_description || tokenData.error}`);
+    }
+
     const access_token = tokenData.access_token;
 
     if (!access_token) {
+      console.error('GitHub Token Exchange failed - no access_token in response:', tokenData);
       throw new Error('Failed to exchange code for access token');
     }
 
@@ -44,6 +51,7 @@ export async function GET(req: NextRequest) {
     const githubUser = await userResponse.json();
 
     if (!userResponse.ok) {
+      console.error('GitHub Profile Fetch Error:', githubUser);
       throw new Error(`GitHub Profile Error: ${githubUser.message || userResponse.statusText}`);
     }
 
@@ -55,7 +63,18 @@ export async function GET(req: NextRequest) {
       },
     });
     const emails = await emailResponse.json();
-    const primaryEmail = emails.find((e: any) => e.primary && e.verified)?.email || emails[0]?.email;
+
+    if (!emailResponse.ok) {
+      console.error('GitHub Emails Fetch Error:', emails);
+      throw new Error(`GitHub Email Error: ${emails.message || emailResponse.statusText}`);
+    }
+
+    let primaryEmail = null;
+    if (Array.isArray(emails)) {
+      primaryEmail = emails.find((e: any) => e.primary && e.verified)?.email || emails[0]?.email;
+    } else {
+      console.error('GitHub Emails response is not an array:', emails);
+    }
 
     if (!primaryEmail) {
       throw new Error('No verified email found from GitHub');
@@ -92,8 +111,10 @@ export async function GET(req: NextRequest) {
     });
 
     return NextResponse.redirect(`${env.NEXT_PUBLIC_URL}/dashboard`);
-  } catch (error) {
-    console.error('GitHub OAuth Error:', error);
+  } catch (error: any) {
+    console.error('GitHub OAuth Full Error:', error.message || error);
+    // You can optionally pass the error message to the login page for debugging
+    // return NextResponse.redirect(`${env.NEXT_PUBLIC_URL}/login?error=oauth_failed&message=${encodeURIComponent(error.message)}`);
     return NextResponse.redirect(`${env.NEXT_PUBLIC_URL}/login?error=oauth_failed`);
   }
 }
