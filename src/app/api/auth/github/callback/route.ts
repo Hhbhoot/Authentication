@@ -12,6 +12,8 @@ export async function GET(req: NextRequest) {
   }
 
   try {
+    const redirect_uri = `${env.NEXT_PUBLIC_URL}/api/auth/github/callback`.replace(/\/+$/, '');
+    
     // 1. Exchange code for access token
     const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
       method: 'POST',
@@ -23,7 +25,7 @@ export async function GET(req: NextRequest) {
         code,
         client_id: env.GITHUB_ID!,
         client_secret: env.GITHUB_SECRET!,
-        redirect_uri: `${env.NEXT_PUBLIC_URL}/api/auth/github/callback`,
+        redirect_uri,
       }),
     });
 
@@ -113,8 +115,11 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(`${env.NEXT_PUBLIC_URL}/dashboard`);
   } catch (error: any) {
     console.error('GitHub OAuth Full Error:', error.message || error);
-    // You can optionally pass the error message to the login page for debugging
-    // return NextResponse.redirect(`${env.NEXT_PUBLIC_URL}/login?error=oauth_failed&message=${encodeURIComponent(error.message)}`);
-    return NextResponse.redirect(`${env.NEXT_PUBLIC_URL}/login?error=oauth_failed`);
+    
+    // Construct error message for the URL
+    const errorMessage = error.message || 'OAuth verification failed';
+    const errorParam = encodeURIComponent(errorMessage);
+    
+    return NextResponse.redirect(`${env.NEXT_PUBLIC_URL}/login?error=oauth_failed&message=${errorParam}`);
   }
 }

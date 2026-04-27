@@ -75,6 +75,12 @@ export default function LoginPage() {
           <p className="mt-2 text-slate-600 dark:text-slate-400">Sign in to manage your account</p>
         </div>
 
+        {searchParams.get('error') === 'oauth_failed' && (
+          <div className="rounded-lg bg-red-50 dark:bg-red-950/30 p-4 text-sm font-medium text-red-700 dark:text-red-400 border border-red-100 dark:border-red-900 text-center mb-4">
+            GitHub Login Failed: {searchParams.get('message') || 'Please try again or use another method.'}
+          </div>
+        )}
+
         {verified && (
           <div className="rounded-lg bg-emerald-50 dark:bg-emerald-950/30 p-4 text-sm font-medium text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900 text-center">
             Email verified successfully! You can now log in.
