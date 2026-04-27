@@ -30,7 +30,10 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300 antialiased">
+      <body 
+        className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300 antialiased"
+        suppressHydrationWarning
+      >
         <Providers>
           <Navbar />
           <main className="pt-16 pb-12">
